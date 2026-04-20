@@ -28,7 +28,7 @@ const productSchema = new Schema({
     enum: ["Pakaian", "Aksesoris", "Otomotif", "Elektronik", "Furniture"],
   },
   stock: {
-    type: String,
+    type: Number,
     default: 0,
   },
 });
