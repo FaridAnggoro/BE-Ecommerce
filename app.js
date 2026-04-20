@@ -5,6 +5,7 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 
 import authRouter from "./routes/authRouter.js";
+import productRouter from "./routes/productRouter.js";
 
 // konfigurasi dotenv
 dotenv.config();
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true })); // menampung data urlencoded di
 
 // Parent router
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/product", productRouter);
 
 app.use(notFound);
 app.use(errorHandler);
