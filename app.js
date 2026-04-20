@@ -1,8 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import cookieParser from "cookie-parser";
 
 import authRouter from "./routes/authRouter.js";
 
@@ -14,6 +14,7 @@ const port = 3000;
 
 // middleware
 app.use(express.json()); // menampung data json di request body
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // menampung data urlencoded di request body
 
 // Parent router
