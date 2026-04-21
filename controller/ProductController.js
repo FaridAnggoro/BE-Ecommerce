@@ -18,9 +18,19 @@ export const AllProduct = asyncHandler(async (req, res) => {
   const excludeField = ["page", "limit"];
   excludeField.forEach((element) => delete queryObj[element]);
 
-  // fungsi filter
-  // ambil semua product berdasarkan query objek
-  let query = Product.find(queryObj);
+  // search
+  // regex => searching berdasarkan karakter yang diinput dalam query
+  let query;
+
+  if (req.query.product_name) {
+    query = Product.find({
+      product_name: { $regex: req.query.product_name, $options: "i" },
+    });
+  } else {
+    // fungsi filter
+    // ambil semua product berdasarkan query objek
+    query = Product.find(queryObj);
+  }
 
   // fungsi pagination
   const page = req.query.page * 1 || 1; // mulai dari page 1
@@ -30,11 +40,11 @@ export const AllProduct = asyncHandler(async (req, res) => {
   // tambahkan fungsi query
   query = query.skip(skipData).limit(limitData);
 
-  // kondisi
+  // jumlah data dokumen
+  let countProduct = await Product.countDocuments();
   if (req.query.page) {
-    const numProduct = await Product.countDocuments(); // menghitung jumlah data
     // jika page sudah melebihi jumlah data produk
-    if (skipData >= numProduct) {
+    if (skipData >= countProduct) {
       res.status(404);
       throw new Error("Halaman ini tidak ditemukan");
     }
@@ -45,6 +55,7 @@ export const AllProduct = asyncHandler(async (req, res) => {
   return res.status(200).json({
     message: "Menampilkan semua data product",
     data,
+    count: countProduct,
   });
 });
 
