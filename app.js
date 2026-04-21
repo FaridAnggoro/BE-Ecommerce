@@ -17,6 +17,7 @@ const port = 3000;
 app.use(express.json()); // menampung data json di request body
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // menampung data urlencoded di request body
+app.use(express.static("./public")); // folder public dapat diaskes di browser
 
 // Parent router
 app.use("/api/v1/auth", authRouter);
