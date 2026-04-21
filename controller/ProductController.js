@@ -38,11 +38,28 @@ export const DetailProduct = asyncHandler(async (req, res) => {
 });
 
 export const UpdateProduct = asyncHandler(async (req, res) => {
-  res.send("Update Product");
+  // ambil parameter id
+  const paramId = req.params.id;
+  const updateProduct = await Product.findByIdAndUpdate(paramId, req.body, {
+    runValidators: false,
+    new: true,
+  });
+
+  return res.status(201).json({
+    message: "Data produk telah diubah",
+    data: updateProduct,
+  });
 });
 
 export const DeleteProduct = asyncHandler(async (req, res) => {
-  res.send("Delete Product");
+  // ambil parameter id
+  const paramId = req.params.id;
+
+  await Product.findByIdAndDelete(paramId);
+
+  return res.status(200).json({
+    message: "Menghapus data produk",
+  });
 });
 
 export const UploadProduct = asyncHandler(async (req, res) => {
