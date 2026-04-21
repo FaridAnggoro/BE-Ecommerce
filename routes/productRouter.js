@@ -1,6 +1,9 @@
 import express from "express";
 
-import { protectedMiddleware } from "../middleware/authMiddleware.js";
+import {
+  ownerMiddleware,
+  protectedMiddleware,
+} from "../middleware/authMiddleware.js";
 
 import {
   AllProduct,
@@ -16,7 +19,7 @@ const router = express.Router();
 // create data product
 // post /api/v1/auth/product
 // middleware owner
-router.post("/", protectedMiddleware, CreateProduct);
+router.post("/", protectedMiddleware, ownerMiddleware, CreateProduct);
 
 // all data product
 // get /api/v1/auth/product
@@ -29,12 +32,12 @@ router.get("/:id", DetailProduct);
 // update data product
 // put /api/v1/auth/product/:id
 // middleware owner
-router.put("/:id", protectedMiddleware, UpdateProduct);
+router.put("/:id", protectedMiddleware, ownerMiddleware, UpdateProduct);
 
 // delete data product
 // put /api/v1/auth/product
 // middleware owner
-router.delete("/:id", protectedMiddleware, DeleteProduct);
+router.delete("/:id", protectedMiddleware, ownerMiddleware, DeleteProduct);
 
 // delete data product
 // post /api/v1/auth/product/file-upload

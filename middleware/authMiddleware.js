@@ -28,3 +28,15 @@ export const protectedMiddleware = asyncHandler(async (req, res, next) => {
     throw new Error("token tidak ditemukan");
   }
 });
+
+export const ownerMiddleware = (req, res, next) => {
+  // cek role owner
+  if (req.user && req.user.role === "owner") {
+    next();
+  } else {
+    res.status(401);
+    throw new Error(
+      "Oops!, halaman tidak bisa diakses karena anda bukan pemilik",
+    );
+  }
+};
