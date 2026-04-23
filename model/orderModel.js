@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 // schema objek mongoose
 const singleProduct = Schema({
-  name: {
+  product_name: {
     type: String,
     required: true,
   },
