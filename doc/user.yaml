@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: Building a Scalable API Login System with JWT, Express.js, and MongoDB
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+paths:
+  /api/v1/auth/register:
+    post:
+      summary: Create a New User
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: The user was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+
+  /api/v1/auth/login:
+    post:
+      summary: Login user
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "401":
+          description: Invalid email or password
+
+  /api/v1/auth/getUser:
+    get:
+      # Biasanya pakai GET untuk mengambil data
+      summary: Get current user profile
+      tags:
+        - Users
+      security:
+        - bearerAuth: [] # Menandakan endpoint ini butuh Token
+      responses:
+        "200":
+          description: User data retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authorized (Token hilang/kadaluarsa)
+
+  /api/v1/auth/logout:
+    get:
+      summary: Logout current user
+      description: Membatalkan sesi pengguna saat ini.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LogoutResponse"
+        "401":
+          description: Unauthorized (Token invalid or missing)
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - fullname
+        - username
+        - email
+        - password
+      properties:
+        fullname: { type: string }
+        username: { type: string }
+        email: { type: string }
+        password: { type: string }
+        role:
+          type: string
+          enum: [ user, owner ]
+          description: Role of the user
+      examples:
+        - summary: Role Owner
+          value:
+            fullname: farid
+            username: farid05
+            email: farid@mail.com
+            password: "12345678"
+            role: owner
+
+        - summary: Role User
+          value:
+            fullname: farid
+            username: farid30
+            email: farid30@mail.com
+            password: "12345678"
+            role: user
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email: { type: string }
+        password: { type: string }
+
+    LoginResponse:
+      type: object
+      properties:
+        message: { type: string }
+        token: { type: string, description: "JWT access token" }
+        role: { type: string, description: "Role of the logged in user/owner" }
+
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+
+    LogoutResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Logout successful"

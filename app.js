@@ -1,6 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
+import cors from "cors";
+
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
 
@@ -14,11 +18,16 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
+// Swagger
+const swaggerDocument = YAML.load("./doc/user.yaml");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // middleware
 app.use(express.json()); // menampung data json di request body
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // menampung data urlencoded di request body
 app.use(express.static("./public")); // folder public dapat diaskes di browser
+app.use(cors()); // Ini mengizinkan semua origin untuk mengakses API Anda
 
 // Parent router
 app.use("/api/v1/auth", authRouter);
