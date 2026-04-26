@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 import cors from "cors";
+import fs from "fs";
+import path from "path";
 
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
@@ -18,8 +20,25 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
+// Load semua file
+const userDoc = YAML.load("./doc/user.yaml");
+const productDoc = YAML.load("./doc/product.yaml");
+
 // Swagger
-const swaggerDocument = YAML.load("./doc/user.yaml");
+const swaggerDocument = {
+  ...userDoc,
+  paths: {
+    ...userDoc.paths,
+    ...productDoc.paths,
+  },
+  components: {
+    ...userDoc.components,
+    schemas: {
+      ...userDoc.components.schemas,
+      ...productDoc.components.schemas,
+    },
+  },
+};
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // middleware
@@ -44,6 +63,8 @@ app.listen(port, () => {
 
 // koneksi DB
 mongoose
-  .connect(process.env.DATABASE, {})
+  .connect(process.env.DATABASE, {
+    bufferCommands: false,
+  })
   .then(() => console.log("Database berhasil terkoneksi"))
   .catch((err) => console.log(err));
